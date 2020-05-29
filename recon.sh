@@ -50,7 +50,7 @@ while read line; do
         rm -rf amassoutput.txt hosts-amass.txt hosts-subfinder.txt hosts-assetfinder.txt hosts-crtsh.txt hosts-certspotter.txt
 
         #Remove out of scope items
-        grep -vf $scopeFolder/$line-ignore.txt hosts-all.txt > hosts-inscope.txt 
+        #grep -vf $scopeFolder/$line-ignore.txt hosts-all.txt > hosts-inscope.txt 
 
         #Checking for alive hosts
 
