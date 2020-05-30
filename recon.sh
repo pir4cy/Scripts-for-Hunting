@@ -15,8 +15,8 @@ banner()  #Create Banner
 mainFolder="$HOME/bugHunting/"
 toolsFolder="$HOME/tools" 
 targetFolder=$1
-input=$2        #Pass in-scope file
-avoid=$3        #pass out-scope file
+input="$targetFolder/targets.txt"        #Pass in-scope file
+avoid="$targetFolder/avoid.txt"        #pass out-scope file
 
 cd $targetFolder
 
