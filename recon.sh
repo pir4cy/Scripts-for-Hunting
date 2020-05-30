@@ -66,7 +66,7 @@ while read line; do
         clear
         banner "Masscan"
         cat $line-massdns.out | awk '{print $3}' | sort -u | grep -oE "\b([0-9]{1,3}\.){3}[0-9]{1,3}\b" > ips-massdns.txt
-        cat amassoutput.txt | cut -d']' -f 2 | awk '{print $2}' | sort -u > ip-amass.txt 
+        cat amassoutput.txt | cut -d']' -f 2 | awk '{print $2}' | sort -u > ips-amass.txt 
         cat ips-massdns.txt ips-amass.txt | sort -u > ips-online.txt
         masscan -iL ips-online.txt --rate 10000 -p1-65535 --open-only --output-filename $line-masscan.out
 
