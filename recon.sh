@@ -13,15 +13,13 @@ banner()  #Create Banner
 
 #Some Variables
 
-mainFolder="$HOME/bugHunting/"
-toolsFolder="$HOME/tools"
-scopeFolder="$mainFolder/targetScopes"
-input=$1
+toolsFolder="$HOME/tools" 
+in-scope=$1        #Pass in-scope file
+read -p "Enter full path of out-of-scope.txt: " out-scope   #pass out-scope file
 
 #Main Loop
-while read line; do
+while read line; do             
 
-        cd $mainFolder
         mkdir $line
         cd $line
 
@@ -29,33 +27,31 @@ while read line; do
         banner "Recon Tool"
         
         #AMASS
-        amass enum -src -ip -active -d $line >> amassoutput.txt
-        cat amassoutput.txt | cut -d']' -f 2 | awk '{print $1}' | sort -u > hosts-amass.txt &
-        cat amassoutput.txt | cut -d']' -f 2 | awk '{print $2}' | sort -u > ip-amass.txt &
+        amass enum -src -ip -active -d $line -o amassoutput.txt
+        cat amassoutput.txt | cut -d']' -f 2 | awk '{print $1}' | sort -u > hosts-amass.txt 
 
         #Subfinder
-        subfinder -d $line -o hosts-subfinder.txt -silent &
+        subfinder -d $line -o hosts-subfinder.txt -silent 
 
         #AssetFinder
-        assetfinder --subs-only $line >> hosts-assetfinder.txt &
+        assetfinder --subs-only $line >> hosts-assetfinder.txt 
 
         #Crt.sh
-        curl -s "https://crt.sh/?q=%.$line&output=json" | jq '.[].name_value' | sed 's/\"//g' | sed 's/\*\.//g' | sort -u > hosts-crtsh.txt &
-        curl -s https://certspotter.com/api/v0/certs\?domain\=$line | jq '.[].dns_names[]' | sed 's/\"//g' | sed 's/\*\.//g' | sort -u > hosts-certspotter.txt &
+        curl -s "https://crt.sh/?q=%.$line&output=json" | jq '.[].name_value' | sed 's/\"//g' | sed 's/\*\.//g' | sort -u > hosts-crtsh.txt 
+        curl -s https://certspotter.com/api/v0/certs\?domain\=$line | jq '.[].dns_names[]' | sed 's/\"//g' | sed 's/\*\.//g' | sort -u > hosts-certspotter.txt 
 
-        wait
 
         #Remove dupes and join all data found
         cat hosts-amass.txt hosts-crtsh.txt hosts-certspotter.txt hosts-subfinder.txt hosts-assetfinder.txt | sort -u > hosts-all.txt 
-        rm -rf amassoutput.txt hosts-amass.txt hosts-subfinder.txt hosts-assetfinder.txt hosts-crtsh.txt hosts-certspotter.txt
+        rm -rf hosts-amass.txt hosts-subfinder.txt hosts-assetfinder.txt hosts-crtsh.txt hosts-certspotter.txt
 
         #Remove out of scope items
-        #grep -vf $scopeFolder/$line-ignore.txt hosts-all.txt > hosts-inscope.txt 
+        grep -vf $out-scope hosts-all.txt > hosts-scope.txt 
 
         #Checking for alive hosts
 
         #MassDNS
-        massdns -r $toolsFolder/massdns/lists/resolvers.txt -t A -o S -w $line-massdns.out hosts-inscope.txt
+        massdns -r $toolsFolder/massdns/lists/resolvers.txt -t A -o S -w $line-massdns.out hosts-scope.txt
         cat $line-massdns.out | awk '{print $1}' | sed 's/.$//' | sort -u > hosts-online.txt
 
         #Checking for subdomain takeover
@@ -66,8 +62,9 @@ while read line; do
         #Masscan
         clear
         banner "Masscan"
-        cat $line-massdns.out | awk '{print $3}' | sort -u | grep -oE "\b([0-9]{1,3}\.){3}[0-9]{1,3}\b" > ips-online.txt
+        cat $line-massdns.out | awk '{print $3}' | sort -u | grep -oE "\b([0-9]{1,3}\.){3}[0-9]{1,3}\b" > ips-massdns.txt
+        cat amassoutput.txt | cut -d']' -f 2 | awk '{print $2}' | sort -u > ip-amass.txt 
+        cat ips-massdns.txt ips-amass.txt | sort -u > ips-online.txt
         masscan -iL ips-online.txt --rate 10000 -p1-65535 --open-only --output-filename $line-masscan.out
 
-
-done < $input
+done < $in-scope
