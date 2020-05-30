@@ -19,7 +19,8 @@ input="$mainFolder/$targetFolder/targets.txt"        #Pass in-scope file
 avoid="$mainFolder/$targetFolder/avoid.txt"        #pass out-scope file
 
 cd $targetFolder
-
+mkdir domains
+cd domains
 #Main Loop
 while read line; do             
 
@@ -69,6 +70,9 @@ while read line; do
         cat amassoutput.txt | cut -d']' -f 2 | awk '{print $2}' | sort -u > ips-amass.txt 
         cat ips-massdns.txt ips-amass.txt | sort -u > ips-online.txt
         masscan -iL ips-online.txt --rate 10000 -p1-65535 --open-only --output-filename $line-masscan.out
+
+        cd ..
+        mv $line $line_done
 
 done < $input
 
