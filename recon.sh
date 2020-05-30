@@ -58,6 +58,9 @@ while read line; do
         massdns -r $toolsFolder/massdns/lists/resolvers.txt -t A -o S -w $line-massdns.out hosts-scope.txt
         cat $line-massdns.out | awk '{print $1}' | sed 's/.$//' | sort -u > hosts-online.txt
 
+        #httpx
+        httpx -l hosts-online.txt -title -content-length -status-code | tees httpx-out.txt
+
         #Checking for subdomain takeover
         clear
         banner "Subdomain Takeover"
@@ -72,7 +75,7 @@ while read line; do
         masscan -iL ips-online.txt --rate 10000 -p1-65535 --open-only --output-filename $line-masscan.out
 
         cd ..
-        mv $line $line_done
+        mv $line $line-done
 
 done < $input
 
