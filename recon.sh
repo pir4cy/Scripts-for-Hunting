@@ -12,10 +12,13 @@ banner()  #Create Banner
 }
 
 #Some Variables
-
+mainFolder="$HOME/bugHunting/"
 toolsFolder="$HOME/tools" 
-in-scope=$1        #Pass in-scope file
-read -p "Enter full path of out-of-scope.txt: " out-scope   #pass out-scope file
+targetFolder=$1
+input=$2        #Pass in-scope file
+avoid=$3        #pass out-scope file
+
+cd $targetFolder
 
 #Main Loop
 while read line; do             
@@ -46,7 +49,7 @@ while read line; do
         rm -rf hosts-amass.txt hosts-subfinder.txt hosts-assetfinder.txt hosts-crtsh.txt hosts-certspotter.txt
 
         #Remove out of scope items
-        grep -vf $out-scope hosts-all.txt > hosts-scope.txt 
+        grep -vf $avoid hosts-all.txt > hosts-scope.txt 
 
         #Checking for alive hosts
 
@@ -67,4 +70,6 @@ while read line; do
         cat ips-massdns.txt ips-amass.txt | sort -u > ips-online.txt
         masscan -iL ips-online.txt --rate 10000 -p1-65535 --open-only --output-filename $line-masscan.out
 
-done < $in-scope
+done < $input
+
+cd $mainFolder
