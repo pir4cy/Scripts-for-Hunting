@@ -59,7 +59,7 @@ while read line; do
         cat $line-massdns.out | awk '{print $1}' | sed 's/.$//' | sort -u > hosts-online.txt
 
         #httpx
-        httpx -l hosts-online.txt -title -content-length -status-code | tees httpx-out.txt
+        httpx -l hosts-online.txt -title -content-length -status-code | tee httpx-out.txt
 
         #Checking for subdomain takeover
         clear
