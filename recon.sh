@@ -52,6 +52,9 @@ while read line; do
         #Remove out of scope items
         grep -vf $avoid hosts-all.txt > hosts-scope.txt 
 
+        #WaybackUrl Output
+        cat hosts-scope.txt | waybackurls > waybackout.txt
+
         #Checking for alive hosts
 
         #MassDNS
