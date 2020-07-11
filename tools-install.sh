@@ -39,8 +39,7 @@ select choice in "${choices[@]}"; do
 					source ~/.bash_profile
 					sleep 1
 					break
-					;;
-				no)
+					p				no)
 					echo "Please install go and rerun this script"
 					echo "Aborting installation..."
 					exit 1

@@ -1,9 +1,8 @@
 #!/bin/bash
 
-#Setting GOPATH
-export GOROOT=/usr/local/go
-export GOPATH=$HOME/go
-export PATH=$GOPATH/bin:$GOROOT/bin:$PATH
+#export GOROOT=/usr/local/go
+#export GOPATH=$HOME/go
+#export PATH=$GOPATH/bin:$GOROOT/bin:$PATH
 
 #Banner 
 banner()  #Create Banner
@@ -12,11 +11,10 @@ banner()  #Create Banner
 }
 
 #Some Variables
-mainFolder="$HOME/bugHunting/"
 toolsFolder="$HOME/tools" 
 targetFolder=$1
-input="$mainFolder/$targetFolder/targets.txt"        #Pass in-scope file
-avoid="$mainFolder/$targetFolder/avoid.txt"        #pass out-scope file
+input="$targetFolder/targets.txt"        #Pass in-scope file
+avoid="$targetFolder/avoid.txt"        #pass out-scope file
 
 cd $targetFolder
 mkdir domains
