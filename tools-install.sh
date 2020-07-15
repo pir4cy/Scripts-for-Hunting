@@ -17,6 +17,7 @@ sudo apt-get install -y python-dnspython
 sudo apt-get install -y git
 sudo apt-get install -y rename
 sudo apt-get install -y figlet
+sudo apt-get install -y screen
 sudo apt-get install -y xargs
 
 if [[ -z "$GOPATH" ]];then
