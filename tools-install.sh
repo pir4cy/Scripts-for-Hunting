@@ -39,7 +39,8 @@ select choice in "${choices[@]}"; do
 					source ~/.bash_profile
 					sleep 1
 					break
-					p				no)
+					;;
+			no)
 					echo "Please install go and rerun this script"
 					echo "Aborting installation..."
 					exit 1
@@ -47,15 +48,6 @@ select choice in "${choices[@]}"; do
 	esac	
 done
 fi
-
-
-#Installing pretty things
-
-echo "Installing lsd"
-wget https://github.com/Peltoche/lsd/releases/download/0.17.0/lsd-musl_0.17.0_amd64.deb
-sudo dpkg -i lsd-musl_0.17.0_amd64.deb
-command -v lsd > /dev/null && alias ls='lsd --group-dirs first'
-
 
 echo "Installing tools"
 
