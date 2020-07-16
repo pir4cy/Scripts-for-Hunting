@@ -29,14 +29,14 @@ while read line; do
         banner "Recon Tool"
         
         #AMASS
-        sudo amass enum -src -ip -active -d $line -o amassoutput.txt
+         amass enum -src -ip -active -d $line -o amassoutput.txt
         cat amassoutput.txt | cut -d']' -f 2 | awk '{print $1}' | sort -u > hosts-amass.txt 
 
         #Subfinder
-        sudo subfinder -d $line -o hosts-subfinder.txt -silent 
+         subfinder -d $line -o hosts-subfinder.txt -silent 
 
         #AssetFinder
-        sudo assetfinder --subs-only $line >> hosts-assetfinder.txt 
+         assetfinder --subs-only $line >> hosts-assetfinder.txt 
 
         #Crt.sh
         curl -s "https://crt.sh/?q=%.$line&output=json" | jq '.[].name_value' | sed 's/\"//g' | sed 's/\*\.//g' | sort -u > hosts-crtsh.txt 
@@ -56,16 +56,16 @@ while read line; do
         #Checking for alive hosts
 
         #MassDNS
-        sudo massdns -r $toolsFolder/massdns/lists/resolvers.txt -t A -o S -w $line-massdns.out hosts-scope.txt
+         massdns -r $toolsFolder/massdns/lists/resolvers.txt -t A -o S -w $line-massdns.out hosts-scope.txt
         cat $line-massdns.out | awk '{print $1}' | sed 's/.$//' | sort -u > hosts-online.txt
 
         #httpx
-        sudo httpx -l hosts-online.txt -title -content-length -status-code | tee httpx-out.txt
+         httpx -l hosts-online.txt -title -content-length -status-code | tee httpx-out.txt
 
         #Checking for subdomain takeover
         clear
         banner "Subdomain Takeover"
-        sudo subjack -w hosts-online.txt -t 1000 -o $line-takeover.txt -v
+         subjack -w hosts-online.txt -t 1000 -o $line-takeover.txt -v
 
         #Masscan
         clear
@@ -73,7 +73,7 @@ while read line; do
         cat $line-massdns.out | awk '{print $3}' | sort -u | grep -oE "\b([0-9]{1,3}\.){3}[0-9]{1,3}\b" > ips-massdns.txt
         cat amassoutput.txt | cut -d']' -f 2 | awk '{print $2}' | sort -u > ips-amass.txt 
         cat ips-massdns.txt ips-amass.txt | sort -u > ips-online.txt
-        sudo masscan -iL ips-online.txt --rate 10000 -p1-65535 --open-only --output-filename $line-masscan.out
+         masscan -iL ips-online.txt --rate 10000 -p1-65535 --open-only --output-filename $line-masscan.out
 
         cd ..
         mv $line $line-done
