@@ -15,6 +15,7 @@ sudo apt-get install -y python3-pip
 sudo apt-get install -y python-pip
 sudo apt-get install -y python-dnspython
 sudo apt-get install -y git
+sudo apt-get install -y curl
 sudo apt-get install -y rename
 sudo apt-get install -y figlet
 sudo apt-get install -y screen
