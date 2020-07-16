@@ -80,4 +80,4 @@ while read line; do
 
 done < $input
 
-mv $targetFolder /mnt/Shared/bugHunting/
+sudo mv $targetFolder /mnt/Shared/bugHunting/
