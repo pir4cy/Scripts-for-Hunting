@@ -80,5 +80,5 @@ while read line; do
 
 done < $input
 
-cp $targetFolder /mnt/Shared/bugHunting/$targetFolder
+cp -r $targetFolder /mnt/Shared/bugHunting/$targetFolder
 rm -rf $targetFolder
