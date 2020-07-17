@@ -80,4 +80,5 @@ while read line; do
 
 done < $input
 
-sudo mv $targetFolder /mnt/Shared/bugHunting/
+cp $targetFolder /mnt/Shared/bugHunting/$targetFolder
+rm -rf $targetFolder
