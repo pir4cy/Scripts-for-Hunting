@@ -79,5 +79,3 @@ while read line; do
         mv $line $line-done
 
 done < $input
-
-mv $targetFolder /mnt/Shared/bugHunting/ 2>/dev/null    #Command to move file to shared drive
