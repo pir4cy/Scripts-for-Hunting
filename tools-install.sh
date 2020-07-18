@@ -130,14 +130,15 @@ echo "installing meg"
 go get -u github.com/tomnomnom/meg
 echo "done"
 
-echo "installing truffleHog"
-pip install truffleHog
+echo "installing masscan"
+sudo apt-get install masscan
 echo "done"
 
 echo "downloading Seclists"
 cd ~/tools/
 git clone https://github.com/danielmiessler/SecLists.git
 cd ~/tools/SecLists/Discovery/DNS/
+
 ##THIS FILE BREAKS MASSDNS AND NEEDS TO BE CLEANED
 cat dns-Jhaddix.txt | head -n -14 > clean-jhaddix-dns.txt
 cd ~/tools/
