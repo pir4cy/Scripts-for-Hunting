@@ -80,5 +80,4 @@ while read line; do
 
 done < $input
 
-cp -r $targetFolder /mnt/Shared/bugHunting/$targetFolder
-rm -rf $targetFolder
+mv $targetFolder /mnt/Shared/bugHunting/ 2>/dev/null    #Command to move file to shared drive
