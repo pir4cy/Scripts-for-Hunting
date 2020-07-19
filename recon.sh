@@ -66,8 +66,8 @@ while read line; do
         echo "Checking for alive hosts"
        
         #MassDNS
-        massdns -r $toolsFolder/massdns/lists/resolvers.txt -t A -o S -w $line-massdns.out hosts-scope.txt
-        cat $line-massdns.out | awk '{print $1}' | sed 's/.$//' | sort -u > hosts-online.txt
+        massdns -r $toolsFolder/massdns/lists/resolvers.txt -t A -o S -w massdns.out hosts-scope.txt
+        cat massdns.out | awk '{print $1}' | sed 's/.$//' | sort -u > hosts-online.txt
         #httprobe
         cat hosts-online.txt | httprobe -c 50 -t 3000 > hosts-live.txt
 
@@ -95,15 +95,17 @@ while read line; do
         #Masscan
         clear
         banner "Masscan"
-        cat $line-massdns.out | awk '{print $3}' | sort -u | grep -oE "\b([0-9]{1,3}\.){3}[0-9]{1,3}\b" > ips-massdns.txt
+        cat massdns.out | awk '{print $3}' | sort -u | grep -oE "\b([0-9]{1,3}\.){3}[0-9]{1,3}\b" > ips-massdns.txt
         cat amassoutput.txt | cut -d']' -f 2 | awk '{print $2}' | sort -u > ips-amass.txt 
         cat ips-massdns.txt ips-amass.txt | sort -u > ips-online.txt
-        masscan -iL ips-online.txt --rate 10000 -p1-65535 --open-only --output-filename $line-masscan.out
+        masscan -iL ips-online.txt --rate 10000 -p1-65535 --open-only --output-filename masscan.out
 
         #Checking for subdomain takeover
         clear
         banner "Subdomain Takeover"
-        subjack -w hosts-online.txt -t 1000 -o $line-takeover.txt -v
+        subjack -w hosts-online.txt -t 1000 -o subjack.txt -v
+        sed '/Not Vulnerable/d' subjack.txt > takeover.txt
+
         cd ..
         mv $line $line-done
 
