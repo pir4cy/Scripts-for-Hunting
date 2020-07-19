@@ -139,6 +139,24 @@ cd ~/tools/
 git clone https://github.com/danielmiessler/SecLists.git
 cd ~/tools/SecLists/Discovery/DNS/
 
+echo "installing corsy"
+git clone https://github.com/s0md3v/Corsy.git
+cd ~/tools/Corsy
+pip3 install -r requirements.txt
+cd ~/tools/
+
+echo "installing gau"
+GO111MODULE=on go get -u -v github.com/lc/gau
+
+echo "installing gf"
+go get -u github.com/tomnomnom/gf
+
+echo "installing wafw00f"
+git clone https://github.com/EnableSecurity/wafw00f.git
+cd ~/tools/wafw00f/
+python setup.py install
+cd ~/tools/
+
 ##THIS FILE BREAKS MASSDNS AND NEEDS TO BE CLEANED
 cat dns-Jhaddix.txt | head -n -14 > clean-jhaddix-dns.txt
 cd ~/tools/

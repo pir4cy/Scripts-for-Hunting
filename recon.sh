@@ -26,7 +26,7 @@ while read line; do
         cd $line
 
         clear
-        banner "Recon Tool"
+        banner "Subdomain Enum"
         
         #AMASS
         amass enum -src -ip -active -d $line -o amassoutput.txt
@@ -50,22 +50,47 @@ while read line; do
         #Remove out of scope items
         grep -vf $avoid hosts-all.txt > hosts-scope.txt 
 
+        echo "Total number of subdomains"
+        cat hosts-scope.txt | wc -l
+
+        #Gau scan
+        gau --subs $line | tee gau_urls.txt
+
         #WaybackUrl Output
-        cat hosts-scope.txt | waybackurls > waybackout.txt
+        cat hosts-scope.txt | waybackurls > archive_urls.txt
+        
+        cat gau_urls.txt archive_urls.txt | sort -u > waybackurls.txt
+        echo "Total Waybackurls"
+        cat waybackurls.txt | wc -l
 
-        #Checking for alive hosts
-
+        echo "Checking for alive hosts"
+       
         #MassDNS
         massdns -r $toolsFolder/massdns/lists/resolvers.txt -t A -o S -w $line-massdns.out hosts-scope.txt
         cat $line-massdns.out | awk '{print $1}' | sed 's/.$//' | sort -u > hosts-online.txt
+        #httprobe
+        cat hosts-online.txt | httprobe -c 50 -t 3000 > hosts-live.txt
 
-        #httpx
-        httpx -l hosts-online.txt -title -content-length -status-code | tee httpx-out.txt
+        echo "Looking for vulnerable endpoints"
+        mkdir gf_listing
+        cat waybackurls.txt | gf redirect > gf_listing/redirect.txt
+        cat waybackurls.txt | gf ssrf > gf_listing/ssrf.txt
+        cat waybackurls.txt | gf rce > gf_listing/rce.txt
+        cat waybackurls.txt | gf idor > gf_listing/idor.txt
+        cat waybackurls.txt | gf sqli > gf_listing/sqli.txt
+        cat waybackurls.txt | gf lfi > gf_listing/lfi.txt
+        cat waybackurls.txt | gf ssti > gf_listing/ssti.txt
+        cat waybackurls.txt | gf debug_logic > gf_listing/debug_logic.txt
+        cat waybackurls.txt | gf intsubs > gf_listing/intsubs.txt
 
-        #Checking for subdomain takeover
-        clear
-        banner "Subdomain Takeover"
-        subjack -w hosts-online.txt -t 1000 -o $line-takeover.txt -v
+        #WAFCheck
+        echo "WAF W00F"
+        wafw00f -i hosts-scope.txt -o waf.txt
+
+        #CORS misconfig
+        echo "Checking for CORS misconfiguration"
+        python3 $HOME/tools/Corsy/corsy.py -i hosts-live.txt -o corsy.json
+        
 
         #Masscan
         clear
@@ -75,6 +100,10 @@ while read line; do
         cat ips-massdns.txt ips-amass.txt | sort -u > ips-online.txt
         masscan -iL ips-online.txt --rate 10000 -p1-65535 --open-only --output-filename $line-masscan.out
 
+        #Checking for subdomain takeover
+        clear
+        banner "Subdomain Takeover"
+        subjack -w hosts-online.txt -t 1000 -o $line-takeover.txt -v
         cd ..
         mv $line $line-done
 
