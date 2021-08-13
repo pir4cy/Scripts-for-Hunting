@@ -14,7 +14,7 @@ banner()  #Create Banner
 toolsFolder="$HOME/tools" 
 targetFolder=$1
 input="$targetFolder/targets.txt"        #Pass in-scope file
-avoid="$targetFolder/avoid.txt"        #pass out-scope file
+avoid="$targetFolder/avoid.txt"        #Pass out-scope file
 
 cd $targetFolder
 mkdir domains
